@@ -10,6 +10,7 @@ import { Check, X, Pencil, ImageIcon } from "lucide-react";
 import { Todo } from "@/types";
 import { editTodoFormAction } from "@/actions/todo-actions";
 import { toast } from "sonner";
+import Spinner from "@/components/spinner";
 
 interface InlineEditProps {
   todo: Todo;
@@ -61,11 +62,7 @@ function TextEditForm({
         <input type="hidden" name="imageUrl" value={todo.image || ""} />
 
         <Button type="submit" size="sm" disabled={pending}>
-          {pending ? (
-            <Check className="h-4 w-4 animate-spin" />
-          ) : (
-            <Check className="h-4 w-4" />
-          )}
+          {pending ? <Spinner /> : <Check className="h-4 w-4" />}
         </Button>
         <Button
           type="button"
@@ -141,11 +138,7 @@ function ImageEditForm({
         <input type="hidden" name="imageUrl" value={previewUrl} />
 
         <Button type="submit" size="sm" disabled={pending}>
-          {pending ? (
-            <Check className="h-4 w-4 animate-spin" />
-          ) : (
-            <Check className="h-4 w-4" />
-          )}
+          {pending ? <Spinner /> : <Check className="h-4 w-4" />}
         </Button>
         <Button
           type="button"
