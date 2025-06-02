@@ -50,7 +50,7 @@ export const updateTodo = async (todo: UpdatedTodo) => {
 };
 
 export const deleteTodo = async (id: Todo["id"]) => {
-  const response = await fetch(`${GOOGLE_SHEETS_URL}?method=patch&id=${id}`, {
+  const response = await fetch(`${GOOGLE_SHEETS_URL}?method=delete&id=${id}`, {
     method: "POST",
     redirect: "follow",
     headers: {
