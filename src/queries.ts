@@ -1,31 +1,64 @@
 "use server";
 
-import { db } from "@/db";
-import { todosTable } from "@/db/schema";
 import { NewTodo, UpdatedTodo, Todo } from "@/types";
-import { eq } from "drizzle-orm";
+import { GOOGLE_SHEETS_URL } from "@/env";
 
 export const getTodos = async () => {
-  const todos = await db.select().from(todosTable);
-  return todos;
+  const response = await fetch(GOOGLE_SHEETS_URL);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch todos");
+  }
+
+  const data = (await response.json()) as Todo[];
+  return data.map((todo) => ({
+    ...todo,
+    createdAt: new Date(todo.createdAt),
+    updatedAt: new Date(todo.updatedAt),
+  }));
 };
 
 export const createTodo = async (todo: NewTodo) => {
-  const newTodo = await db.insert(todosTable).values(todo);
-  return newTodo;
+  const response = await fetch(`${GOOGLE_SHEETS_URL}?method=post`, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
+    body: JSON.stringify(todo),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create todo");
+  }
 };
 
 export const updateTodo = async (todo: UpdatedTodo) => {
   const { id, ...values } = todo;
+  const response = await fetch(`${GOOGLE_SHEETS_URL}?method=patch&id=${id}`, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
+    body: JSON.stringify(values),
+  });
 
-  const updatedTodo = await db
-    .update(todosTable)
-    .set(values)
-    .where(eq(todosTable.id, id));
-  return updatedTodo;
+  if (!response.ok) {
+    throw new Error("Failed to create todo");
+  }
 };
 
 export const deleteTodo = async (id: Todo["id"]) => {
-  const deletedTodo = await db.delete(todosTable).where(eq(todosTable.id, id));
-  return deletedTodo;
+  const response = await fetch(`${GOOGLE_SHEETS_URL}?method=patch&id=${id}`, {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      "Content-Type": "text/plain;charset=utf-8",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create todo");
+  }
 };

@@ -7,3 +7,4 @@ const env = (name: string, defaultValue?: string) => {
 };
 
 export const DATABASE_URL = env("DATABASE_URL");
+export const GOOGLE_SHEETS_URL = env("GOOGLE_SHEETS_URL");
